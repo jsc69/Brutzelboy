@@ -1,0 +1,5 @@
+######################################
+# Syntax Highlighting für Brutzelboy #
+######################################
+
+Brutzelboy  KEYWORD1

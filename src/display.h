@@ -21,6 +21,10 @@
 extern "C" {
 #endif
 
+static inline uint16_t RGB565(uint8_t r, uint8_t g, uint8_t b) {
+    return ((uint16_t)(r & 0xF8) << 8) | ((uint16_t)(g & 0xFC) << 3) | ((uint16_t)(b & 0xF8) >> 3);
+}
+
 void ili9341_init(void);
 void ili9341_deinit(void);
 void ili9341_writeBE(const uint16_t *buffer);

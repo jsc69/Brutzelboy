@@ -1,4 +1,5 @@
 #include <Brutzelboy.h>
+#include <display.h>
 
 Brutzelboy *bb = nullptr;
 
@@ -84,8 +85,8 @@ static inline float fast_cos(float x) {
 }
 
 void drawInfo() {
-  bb->setTextcolor(RGB565(255, 255, 255));
-  bb->setBackcolor(RGB565(0, 0, 0));
+  bb->setTextcolor(C_WHITE);
+  bb->setBackcolor(C_BLACK);
   bb->setFont(&FONT_6X10);
 
   char buf[100];
@@ -178,36 +179,43 @@ static inline uint16_t hsv_to_rgb565(float h) {
 }
 
 // Handler für ButtonEvents
-void onButtonEvent(const uint8_t event, const uint16_t value) {
-  if (event == EVENT_KEY_DOWN) {
-    switch (value) {
-      case KEY_UP:
-        if (f_x < f_max) f_x += f_step;
-        break;
-      case KEY_DOWN:
-        if (f_x > f_min) f_x -= f_step;
-        break;
-      case KEY_LEFT:
-        if (f_y > f_min) f_y -= f_step;
-        break;
-      case KEY_RIGHT:
-        if (f_y < f_max) f_y += f_step;
-        break;
-      case KEY_MENU:
-        if (t_scale > t_min) t_scale -= t_step;
-        break;
-      case KEY_OPTION:
-        if (t_scale < t_max) t_scale += t_step;
-        break;
-      case KEY_A:
-        if (f_xy > f_min) f_xy -= f_step;
-        break;
-      case KEY_B:
-        if (f_xy < f_max) f_xy += f_step;
-        break;
-    }
-  }
+void handleButtons() {
+  uint16_t keyState = bb->getInputState();
+
+  if (keyState & (1 << INPUT_UP))
+    if (f_x < f_max)
+      f_x += f_step;
+
+  if (keyState & (1 << INPUT_DOWN))
+    if (f_x > f_min)
+      f_x -= f_step;
+
+  if (keyState & (1 << INPUT_LEFT))
+    if (f_y > f_min)
+      f_y -= f_step;
+
+
+  if (keyState & (1 << INPUT_RIGHT))
+    if (f_y < f_max)
+      f_y += f_step;
+
+  if (keyState & (1 << INPUT_MENU))
+    if (t_scale > t_min)
+      t_scale -= t_step;
+
+  if (keyState & (1 << INPUT_OPTION))
+    if (t_scale < t_max)
+      t_scale += t_step;
+
+  if (keyState & (1 << INPUT_A))
+    if (f_xy > f_min)
+      f_xy -= f_step;
+
+  if (keyState & (1 << INPUT_B))
+    if (f_xy < f_max)
+      f_xy += f_step;
 }
+
 
 void setup() {
   Serial.begin(115200);
@@ -220,14 +228,13 @@ void setup() {
   bb->setBrightness(255);
   bb->fillScreen(0);
   bb->updateDisplay();
-
-  // Event Handler für die Buttons definieren
-  bb->setButtonEventHandler(onButtonEvent);
 }
 
 void loop() {
   // Gib den Brutzelboy seine Zeit
   bb->loop();
+
+  handleButtons();
 
   plasma_effect(f_x, f_y, f_xy, t_scale, step, "Diagonal Sweep");
   drawInfo();

@@ -55,33 +55,33 @@ uint8_t volume = 16;
 uint8_t brightness = 127;
 
 // Handler für ButtonEvents
-void onButtonEvent(const uint8_t event, const uint16_t value) {
-  if (event == EVENT_KEY_DOWN) {
-    if (value == KEY_OPTION || value == KEY_RIGHT) {
+void handleButtons() {
+  int value = boy.getInputState();
+    if (value == (1 << INPUT_OPTION) || value == (1 << INPUT_RIGHT)) {
       if (volume < 21) {
         boy.setVolume(++volume);
       }
       ESP_LOGI(LOG_TAG, "Volume set to %d\n", volume);
-    } else if (value == KEY_MENUvalue == KEY_LEFT) {
+    } else if (value == (1 << INPUT_MENU) || value == (1 << INPUT_LEFT)) {
       if (volume > 0) {
         boy.setVolume(--volume);
       }
       ESP_LOGI(LOG_TAG, "Volume set to %d\n", volume);
     }
 
-    if (value == KEY_UP && brightness < 255) {
+    if (value == (1 << INPUT_UP) && brightness < 255) {
       brightness += 16;
       boy.setBrightness(brightness);
     }
-    if (value == KEY_DOWN && brightness > 15) {
+    if (value == (1 << INPUT_DOWN) && brightness > 15) {
       brightness -= 16;
       boy.setBrightness(brightness);
     }
 
-    if (value == KEY_A) boy.setLcd(true);
-    if (value == KEY_B) boy.setLcd(false);
-    if (value == KEY_START) flash=10000;
-  }
+    if (value == (1 << INPUT_A)) boy.setLcd(true);
+    if (value == (1 << INPUT_B)) boy.setLcd(false);
+    if (value == (1 << INPUT_START)) flash=10000;
+
 }
 
 bool displayImageFromUrl(const uint16_t x, const uint16_t y, const char* url) {
@@ -208,7 +208,7 @@ void setup() {
   boy.drawString(5, 10, buf);
 
   // Event handler definieren
-  boy.setButtonEventHandler(onButtonEvent);
+  handleButtons();
   uint64_t chipId = ESP.getEfuseMac();
   botNumber = chipId % 90000 + 10000;
   boy.updateDisplay();

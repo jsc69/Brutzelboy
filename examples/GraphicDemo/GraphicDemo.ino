@@ -18,9 +18,6 @@ void setup() {
 }
 
 void loop() {
-  // Gib den Brutzelboy seine Zeit
-  bb->loop();
-
   geometry_demo(0.2f, 6);
   bb->updateDisplay();
 }

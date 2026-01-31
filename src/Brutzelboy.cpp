@@ -549,7 +549,7 @@ void Brutzelboy::drawBitmap16(int16_t x, int16_t y, uint16_t w, uint16_t h, uint
 //------------------------------------------------------
 int Brutzelboy::waitForInput(int ticks)
 {
-  return input_wait_for_press(ticks);
+  return input_wait_for_button_press(ticks);
 }
 
 uint32_t Brutzelboy::getInputState(void)

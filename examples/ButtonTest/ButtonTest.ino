@@ -18,38 +18,43 @@ void setup() {
   bb->updateDisplay();
 }
 
+static int adc_up_down_value = 0;
+static int adc_left_right_value = 0;
+
 void loop() {
-  // Gib den Brutzelboy seine Zeit
-  bb->loop();
-  
   keyState = bb->getInputState();
+  char adcValue[255];
 
   bb->setBackcolor(C_BLACK);
   bb->setTextcolor(keyState & (1 << INPUT_UP) ? C_GREEN : C_WHITE);
-  bb->drawString(5,5,"KEY_UP");
+  bb->drawString(5,5,"UP");
+  sprintf(adcValue, "<%4d>", input_raw_y_value());
+  bb->drawString(50, 5, adcValue);
   bb->setTextcolor(keyState & (1 << INPUT_DOWN) ? C_GREEN : C_WHITE);
-  bb->drawString(5,25,"KEY_DOWN");
+  bb->drawString(5,25,"DOWN");
   bb->setTextcolor(keyState & (1 << INPUT_LEFT) ? C_GREEN : C_WHITE);
-  bb->drawString(5,45,"KEY_LEFT");
+  bb->drawString(5,45,"LEFT");
+  sprintf(adcValue, "<%4d>", input_raw_x_value());
+  bb->drawString(50, 45, adcValue);
   bb->setTextcolor(keyState & (1 << INPUT_RIGHT) ? C_GREEN : C_WHITE);
-  bb->drawString(5,65,"KEY_RIGHT");
+  bb->drawString(5,65,"RIGHT");
 
   bb->setTextcolor(keyState & (1 << INPUT_A) ? C_GREEN : C_WHITE);
-  bb->drawString(5,85,"KEY_A");
+  bb->drawString(5,85,"A");
   bb->setTextcolor(keyState & (1 << INPUT_B) ? C_GREEN : C_WHITE);
-  bb->drawString(5,105,"KEY_B");
+  bb->drawString(5,105,"B");
 
   bb->setTextcolor(keyState & (1 << INPUT_SELECT) ? C_GREEN : C_WHITE);
-  bb->drawString(5,125,"KEY_SELECT");
+  bb->drawString(5,125,"SELECT");
   bb->setTextcolor(keyState & (1 << INPUT_START) ? C_GREEN : C_WHITE);
-  bb->drawString(5,145,"KEY_START");
+  bb->drawString(5,145,"START");
 
   bb->setTextcolor(keyState & (1 << INPUT_MENU) ? C_GREEN : C_WHITE);
-  bb->drawString(5,165,"KEY_MENU");
+  bb->drawString(5,165,"MENU");
   bb->setTextcolor(keyState & (1 << INPUT_BOOT) ? C_GREEN : C_WHITE);
-  bb->drawString(5,185,"KEY_BOOT");
+  bb->drawString(5,185,"BOOT");
   bb->setTextcolor(keyState & (1 << INPUT_OPTION) ? C_GREEN : C_WHITE);
-  bb->drawString(5,205,"KEY_OPTION");
+  bb->drawString(5,205,"OPTION");
 
   bb->updateDisplay();
 }

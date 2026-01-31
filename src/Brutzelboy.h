@@ -10,15 +10,6 @@ extern "C"
 #include "ugui/ugui.h"
 }
 
-
-
-// RGB888 to RGB565 converter
-#define RGB565(r, g, b) ((((r)&0xF8) << 8) | (((g)&0xFC) << 3) | ((b) >> 3))
-
-
-#define RG_LCD_WIDTH 292
-#define RG_LCD_HEIGHT 240
-
 // Battery
 #define RG_BATTERY_DRIVER 1
 #define RG_BATTERY_ADC_CHANNEL ADC1_CHANNEL_3

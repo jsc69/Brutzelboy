@@ -91,6 +91,7 @@ Brutzelboy::Brutzelboy(uint8_t hardware)
   buttonEventHandler = doNothing;
   soundEventHandler = doNothing;
   hardwareSupport = hardware;
+  memset(&cartridgeCfg, 0, sizeof(cartridgeCfg));
 }
 
 Brutzelboy::~Brutzelboy() {
@@ -147,7 +148,22 @@ void Brutzelboy::begin() {
     initWiFi();
   }
   if (hardwareSupport & INIT_CARTRIDGE) {
-    initCartridge();
+    i2c_config_t i2c_conf = {
+      .mode             = I2C_MODE_MASTER,
+      .sda_io_num       = RG_I2C_SDA,
+      .scl_io_num       = RG_I2C_CLK,
+      .sda_pullup_en    = GPIO_PULLUP_ENABLE,
+      .scl_pullup_en    = GPIO_PULLUP_ENABLE,
+    };
+    i2c_conf.master.clk_speed = 400000;
+    i2c_param_config(I2C_NUM_0, &i2c_conf);
+    esp_err_t i2c_err = i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, 0, 0, 0);
+    if (i2c_err == ESP_OK || i2c_err == ESP_ERR_INVALID_STATE) {
+      initCartridge();
+    } else {
+      ESP_LOGE("BRUTZELBOY", "I2C init failed: %s", esp_err_to_name(i2c_err));
+      hardwareSupport &= ~INIT_CARTRIDGE;
+    }
   }
   if (hardwareSupport & INIT_INFRARED) {
     initInfrared();
@@ -160,7 +176,7 @@ void Brutzelboy::begin() {
   if (hardwareSupport & INIT_SD_CARD) Serial.println("\t* SD Card");
   if (hardwareSupport & INIT_WIFI) Serial.println("\t* Wifi");
   if (hardwareSupport & INIT_AUDIO) Serial.println("\t* Audio");
-  if (hardwareSupport & INIT_CARTRIDGE) Serial.println("\t* Cartridge (nicht implementiert)");
+  if (hardwareSupport & INIT_CARTRIDGE) Serial.println("\t* Cartridge");
   if (hardwareSupport & INIT_INFRARED) Serial.println("\t* IR Leds (nicht implementiert)");
   Serial.println();
 }
@@ -254,9 +270,29 @@ void Brutzelboy::initSDCard() {
 
 void Brutzelboy::initCartridge() {
   ESP_LOGI(TAG, "initCartridge");
-  // TO BE DONE!
-  ESP_LOGI(TAG, "Cartridge is not supported by now");
-  hardwareSupport &= ~INIT_CARTRIDGE;
+
+  // Standard-Konfiguration falls nicht vom Aufrufer gesetzt
+  // (i2c_port 0 = I2C_NUM_0, muss mit RG_I2C_SDA/CLK initialisiert sein)
+  if (cartridgeCfg.i2c_port == 0 && cartridgeCfg.addr_u1 == 0) {
+    cartridge_config_t def = CARTRIDGE_DEFAULT_CONFIG(I2C_NUM_0);
+    cartridgeCfg = def;
+  }
+
+  int ret = cartridge_init(&cartridgeCfg);
+  if (ret != CARTRIDGE_OK) {
+    ESP_LOGE(TAG, "Cartridge init failed: %d", ret);
+    hardwareSupport &= ~INIT_CARTRIDGE;
+    return;
+  }
+
+  if (cartridge_is_present()) {
+    ESP_LOGI(TAG, "Cartridge detected");
+  } else {
+    ESP_LOGW(TAG, "No cartridge detected (identifier bit low)");
+  }
+
+  hardwareSupport |= INIT_CARTRIDGE;
+  ESP_LOGI(TAG, "Cartridge ready");
 }
 
 void Brutzelboy::initInfrared() {
@@ -265,6 +301,7 @@ void Brutzelboy::initInfrared() {
   ESP_LOGI(TAG, "Infrared leds are not supported by now");
   hardwareSupport &= ~INIT_INFRARED;
 }
+
 
 /************************************************************************
  * SOUND FUNCTION

@@ -25,7 +25,7 @@ const String SSID = "";
 const String PWD = "";
 
 // Name des Channels in Kleinbuchstaben - z.B. "thebrutzler"
-const String twitchChannelName = "nordschnitzel";
+const String twitchChannelName = "pummelfee86";
 const String urlThumbnail  = "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + twitchChannelName + "-288x162.jpg";
 uint32_t botNumber;
 
@@ -36,7 +36,7 @@ IRCClient client(IRC_SERVER, IRC_PORT, wifiClient);
 // Der Brutzelboy
 //Brutzelboy boy(255);
 // oder zur Bestimmung welche Hardware benutzt wird:
-Brutzelboy boy(INIT_LCD | INIT_BUTTONS |INIT_SPIFFS | INIT_SD_CARD | INIT_WIFI | INIT_AUDIO);
+Brutzelboy boy(INIT_LCD | INIT_BUTTONS |INIT_SPIFFS | INIT_SD_CARD | INIT_WIFI | INIT_AUDIO | INIT_CARTRIDGE);
 
 char textBuffer[MAX_ROWS][MAX_COLS+1];
 String message;

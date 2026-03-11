@@ -1,9 +1,11 @@
 #pragma once
 
 #include <cstdint>
+#include <driver/i2c.h>
 #include "display.h"
 #include "input.h"
 #include "Audio.h"
+#include "cartridge.h"
 
 // Include µGUI with C linkage
 extern "C"
@@ -93,6 +95,9 @@ private:
   void parseCredentialValues(const char* s);
   char ssid[200];
   char pwd[200];
+
+  // Cartridge-Konfiguration (wird in begin() verwendet)
+  cartridge_config_t cartridgeCfg;
 
 public:
   /**
@@ -254,6 +259,28 @@ public:
    * @brief Start playing next sound from queue if no sound is playing
    */
   void playQueuedSound();
+
+  //------------------------- CARTRIDGE ---------------------------
+  /**
+   * @brief Configure the cartridge interface before calling begin().
+   *        Optional — if not called, default config (BrutzelBoy V1.3) is used.
+   *        Handshake is disabled by default; enable by setting wr_pin and rd_pin.
+   * @param cfg  cartridge_config_t — use CARTRIDGE_DEFAULT_CONFIG(i2c_port) as base
+   */
+  void setCartridgeConfig(const cartridge_config_t& cfg) {
+    cartridgeCfg = cfg;
+  }
+
+  /**
+   * @brief Access the low-level cartridge API directly.
+   *        Only valid after begin() with INIT_CARTRIDGE.
+   *        Use cartridge_read(), cartridge_write(), cartridge_read_reg() etc.
+   * @return true if cartridge was initialized successfully
+   */
+  bool isCartridgeReady() const {
+    return hardwareSupport & INIT_CARTRIDGE;
+  }
+
 
   //------------------------------------------------------
   // Input functions

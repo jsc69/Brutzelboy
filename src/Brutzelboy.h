@@ -3,6 +3,7 @@
 #include <cstdint>
 #include "display.h"
 #include "input.h"
+#include "Audio.h"
 
 // Include µGUI with C linkage
 extern "C"

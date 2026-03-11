@@ -1,7 +1,7 @@
 #include <esp_log.h>
 
 #include "Brutzelboy.h"
-#include <Audio.h>
+#include "Audio.h"
 #include <FS.h>
 #include "SPIFFS.h"
 
@@ -17,32 +17,24 @@ const String wifiConfig = "/retro-go/config/wifi.json";
 Brutzelboy* Brutzelboy::current_instance = nullptr;
 
 
-Audio audio;
-enum SoundType { tts,
-                 file,
-                 url };
+Audio audio;enum SoundType {
+  tts,
+  file,
+  url
+};
+
 struct Sound {
   SoundType type;
   char source[161];
   char language[6];
 };
+
 Sound soundQueue[SOUND_QUEUE_LENGTH];
 volatile bool soundIsPlaying = false;
 volatile uint8_t soundPlayed = 255;
 volatile uint8_t queuePointer = 255;
 
-
-
 TaskHandle_t TaskSound;
-
-uint16_t upCount = 0;
-uint16_t downCount = 0;
-uint16_t leftCount = 0;
-uint16_t rightCount = 0;
-uint16_t trigger = 300;
-uint16_t topBorder = 1600;
-uint16_t middleBorder = 1500;
-uint16_t bottomBorder = 900;
 
 
 SPIClass spi = SPIClass();
@@ -557,89 +549,6 @@ uint32_t Brutzelboy::getInputState(void)
   return input_get_state();
 }
 
-/*
-void Brutzelboy::checkButtons() {
-  if (!(hardwareSupport & INIT_BUTTONS)) {
-    ESP_LOGE(TAG, "ERROR: Hardware does not support function \"checkKeys\". Please check initialization of Brutzelboy.");
-    return;
-  }
-  // Analog Keys
-  uint16_t updown = analogRead(RG_ADC_UP_DOWN);
-  uint16_t leftright = analogRead(RG_ADC_LEFT_RIGHT);
-
-  if (updown > topBorder) {
-    if (upCount <= trigger) upCount++;
-    downCount = 0;
-  } else if (updown < middleBorder && updown > bottomBorder) {
-    if (downCount <= trigger) downCount++;
-    upCount = 0;
-  } else {
-    upCount = 0;
-    downCount = 0;
-  }
-  if (leftright > topBorder) {
-    if (leftCount <= trigger) leftCount++;
-    rightCount = 0;
-  } else if (leftright < middleBorder && leftright > bottomBorder) {
-    if (rightCount <= trigger) rightCount++;
-    leftCount = 0;
-  } else {
-    leftCount = 0;
-    rightCount = 0;
-  }
-  processButton(KEY_UP, upCount >= trigger);
-  processButton(KEY_DOWN, downCount >= trigger);
-  processButton(KEY_LEFT, leftCount >= trigger);
-  processButton(KEY_RIGHT, rightCount >= trigger);
-
-  // Digital Keys
-  uint8_t gpio = 0;
-  for (uint16_t i = 16; i <= 1024; i = i << 1) {
-    switch (i) {
-      case KEY_SELECT:
-        gpio = RG_GPIO_KEY_SELECT;
-        break;
-      case KEY_START:
-        gpio = RG_GPIO_KEY_START;
-        break;
-      case KEY_MENU:
-        gpio = RG_GPIO_KEY_MENU;
-        break;
-      case KEY_OPTION:
-        gpio = RG_GPIO_KEY_OPTION;
-        break;
-      case KEY_A:
-        gpio = RG_GPIO_KEY_A;
-        break;
-      case KEY_B:
-        gpio = RG_GPIO_KEY_B;
-        break;
-      case KEY_BOOT:
-        gpio = RG_GPIO_KEY_BOOT;
-        break;
-    }
-    processButton(i, !digitalRead(gpio));
-  }
-}
-
-void Brutzelboy::processButton(uint16_t key, bool pressed) {
-  if (pressed) {
-    if (!(keys & key)) {
-      buttonEventHandler(EVENT_KEY_DOWN, key);
-    }
-    keys |= key;
-  } else {
-    if (keys & key) {
-      buttonEventHandler(EVENT_KEY_UP, key);
-    }
-    keys &= ~key;
-  }
-}
-
-bool Brutzelboy::isButtonPressed(const uint16_t key) {
-  return keys & key;
-}
-*/
 
 /************************************************************************
  * LED

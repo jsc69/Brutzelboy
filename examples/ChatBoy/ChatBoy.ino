@@ -25,7 +25,7 @@ const String SSID = "";
 const String PWD = "";
 
 // Name des Channels in Kleinbuchstaben - z.B. "thebrutzler"
-const String twitchChannelName = "thebrutzler";
+const String twitchChannelName = "nordschnitzel";
 const String urlThumbnail  = "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + twitchChannelName + "-288x162.jpg";
 uint32_t botNumber;
 
@@ -51,7 +51,7 @@ uint32_t previousMillis = -refreshJpegInterval; // Zeitpunkt des letzten Ladens
 SET_LOOP_TASK_STACK_SIZE(8192);
 
 uint16_t flash = 0;
-uint8_t volume = 16;
+uint8_t volume = 21;
 uint8_t brightness = 127;
 
 // Handler für ButtonEvents
